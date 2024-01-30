@@ -25,10 +25,11 @@ ENV CODE_SERVER_CONFIG_DIR=$HOME/.config/code-server
 ENV CODE_SERVER_DATA_DIR=$HOME/.local/share/code-server
 
 # Make sure the directories exist and are owned by devuser
-RUN mkdir -p $CODE_SERVER_CONFIG_DIR $CODE_SERVER_DATA_DIR
+RUN mkdir -p $CODE_SERVER_CONFIG_DIR $CODE_SERVER_DATA_DIR \
+    && chown -R devuser:devuser $CODE_SERVER_CONFIG_DIR $CODE_SERVER_DATA_DIR
 
 # Expose the code-server port
 EXPOSE 8080
 
 # Start code-server
-ENTRYPOINT ["code-server", "--bind-addr", "0.0.0.0:8080", "--auth", "none", "--user-data-dir", "$CODE_SERVER_DATA_DIR", "--config", "$CODE_SERVER_CONFIG_DIR/config.yaml"]
+ENTRYPOINT code-server --bind-addr 0.0.0.0:8080 --auth none --user-data-dir $CODE_SERVER_DATA_DIR --config $CODE_SERVER_CONFIG_DIR/config.yaml
