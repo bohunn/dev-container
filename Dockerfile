@@ -1,7 +1,18 @@
 FROM ubuntu:latest
 
-# Install necessary packages and code-server
-# ... (your previous installation commands)
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    vim \
+    openjdk-11-jdk \
+    sudo
+
+# Install code-server (ensure this installs code-server correctly)
+RUN curl -fsSL https://code-server.dev/install.sh | sh
+
+# Add the directory where code-server is installed to the PATH
+ENV PATH="${PATH}:/usr/local/bin"
 
 # Add a non-root user and switch to it
 RUN useradd -m devuser
