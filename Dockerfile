@@ -5,15 +5,19 @@ RUN apt-get update && apt-get install -y \
     curl \
     git \
     vim \
-    openjdk-11-jdk
+    openjdk-11-jdk \
+    sudo
+
+# Add a non-root user and give them sudo privileges
+RUN useradd -m devuser && echo "devuser:devuser" | chpasswd && adduser devuser sudo
+RUN echo 'devuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+# Set the user and working directory
+USER devuser
+WORKDIR /home/devuser
 
 # Install code-server (web-based VS Code)
 RUN curl -fsSL https://code-server.dev/install.sh | sh
-
-# Add a non-root user
-RUN useradd -m devuser
-USER devuser
-WORKDIR /home/devuser
 
 # Expose the code-server port
 EXPOSE 8080
