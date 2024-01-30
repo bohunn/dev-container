@@ -1,11 +1,16 @@
 FROM ubuntu:latest
 
 # Install necessary packages
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y \
     curl \
+    openssl \
+    jq \
+    bash-completion \
     git \
     vim \
-    openjdk-11-jdk \
+    openjdk-17-jdk \
     sudo \
     && rm -rf /var/lib/apt/lists/*
 
@@ -14,6 +19,9 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # Add a non-root user
 RUN useradd -m devuser
+
+# set bash shell
+RUN chsh -s /bin/bash devuser
 
 # Set environment variables
 ENV HOME=/home/devuser
