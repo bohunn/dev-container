@@ -13,17 +13,17 @@ RUN apt-get update && apt-get install -y \
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # Add a non-root user
-RUN useradd -m devuser \
-    && mkdir -p /home/devuser/.config /home/devuser/.local/share \
-    && chown -R devuser:devuser /home/devuser
+RUN useradd -m devuser
 
 # Set environment variables
 ENV HOME=/home/devuser
 ENV CODE_SERVER_CONFIG_DIR=$HOME/.config/code-server
 ENV CODE_SERVER_DATA_DIR=$HOME/.local/share/code-server
 
-# Grant write access to the group (OpenShift compatible)
-RUN chmod -R g+rw $HOME
+# Create necessary directories and adjust permissions
+RUN mkdir -p $CODE_SERVER_CONFIG_DIR $CODE_SERVER_DATA_DIR \
+    && chown -R devuser:root /home/devuser \
+    && chmod -R 770 /home/devuser
 
 # Set the user and working directory
 USER devuser
@@ -33,4 +33,4 @@ WORKDIR /home/devuser
 EXPOSE 8080
 
 # Start code-server
-ENTRYPOINT code-server --bind-addr 0.0.0.0:8080 --auth none --user-data-dir $CODE_SERVER_DATA_DIR --config $CODE_SERVER_CONFIG_DIR/config.yaml
+ENTRYPOINT ["code-server", "--bind-addr", "0.0.0.0:8080", "--auth", "none", "--user-data-dir", "$CODE_SERVER_DATA_DIR", "--config", "$CODE_SERVER_CONFIG_DIR/config.yaml"]
